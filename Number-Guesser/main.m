@@ -12,6 +12,7 @@ enum state {
     playerGuessing,
     computerGuessing,
     wantToPlay,
+    computerLose,
     playerLose,
     selectDificulty,
     goodbye
@@ -81,10 +82,11 @@ int main(int argc, const char * argv[]) {
                     printf("\n");
                     int option;
                     scanf(" %i",&option);
+                    guessesLeft = 5;
                     if(option == 1){
                         gameState = playerGuessing;
                         answer = setUpPlayerGuess();
-                        guessesLeft = 5;
+                        
                         
                     }else if(option == 2){
                         gameState = selectDificulty;
@@ -181,10 +183,35 @@ int main(int argc, const char * argv[]) {
                     printf("press ENTER when you are ready...");
                     printf("\n");
                     gameState = computerGuessing;
-                    
-                    
+        
                     break;
+                    
+                    
+                case computerLose:
+                    
+                    printf("awe rats, I am out of guesses\n");
+                    printf("what was your number?\n");
+                    scanf(" %i",&guess);
+                    if(guess <= higherThan){
+                        printf("but you said your number was higher than %i ?!?",higherThan);
+                        printf("A HA, I win by default!!!");
+                    }else if(guess >= lowerThan){
+                        printf("but you said your number was lower than %i ?!?",higherThan);
+                        printf("A HA, I win by default!!!");
+                    }else{
+                        printf("ahhh, %i I should have guessed...",guess);
+                    }
+                    
+                    printf("would you like to play again?\n");
+                    printf("( y/n ))\n");
+                    gameState = wantToPlay;
+                    break;
+                    
                 case computerGuessing:
+                    if(guessesLeft <= 0){
+                        gameState = computerLose;
+                        break;
+                    }
                     
                     printf("I have %i guesses left...",guessesLeft);
                     guess = getComputerGuess(computerDificulty,higherThan,lowerThan);
@@ -203,10 +230,12 @@ int main(int argc, const char * argv[]) {
                         gameState = wantToPlay;
                     }else if(option == 2){
                         higherThan = guess;
+                        guessesLeft--;
                         printf("hmmm, too hlow... \n");
                     }
                     else if(option == 3){
                         lowerThan = guess;
+                        guessesLeft--;
                         printf("hmmm, too high... \n");
                     }else{
                         
