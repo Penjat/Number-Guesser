@@ -28,11 +28,22 @@ enum dificulty{
 int setUpPlayerGuess(){
     printf("Alright!\n");
     printf("I am thinking of a number between 0 and 100\n");
-    return 5;//TODO get a random number
+    return arc4random_uniform(101);
 }
-int getComputerGuess(){
+int getComputerGuess(enum state computerDificulty, int higherThan, int lowerThan){
     
-    return 8;
+    
+    
+    if(computerDificulty == easy){
+        NSLog(@"easy guess");
+        return arc4random_uniform(101);
+    }else if(computerDificulty == medium){
+        NSLog(@"medium guess");
+        return (arc4random_uniform(lowerThan - 1 - higherThan) + higherThan+1);
+    }
+    NSLog(@"hard guess");
+    return ((lowerThan - higherThan)/2 + higherThan);
+    
 }
 
 int main(int argc, const char * argv[]) {
@@ -43,6 +54,8 @@ int main(int argc, const char * argv[]) {
         int guess;
         int answer;
         int guessesLeft = 5;
+        int higherThan = -1;
+        int lowerThan = 101;
         char keepPlaying;
         
         
@@ -63,7 +76,9 @@ int main(int argc, const char * argv[]) {
                     
                     printf("What type of game do you want to play?\n");
                     printf("\n");
-                    printf("1) I'll guess 2)Gumber should guess\n" );
+                    printf("1) I'll guess\n" );
+                    printf("2)Gumber should guess\n" );
+                    printf("\n");
                     int option;
                     scanf(" %i",&option);
                     if(option == 1){
@@ -105,6 +120,9 @@ int main(int argc, const char * argv[]) {
                     printf("sorry dude...\n");
                     printf("you have no more guesses left.\n");
                     printf("the number I was thinking of was %i\n",answer);
+                    printf("\n");
+                    printf("do you want to play again? \n");
+                    gameState = wantToPlay;
                     break;
                 case playerGuessing:
                     //check if guessesLeft
@@ -148,34 +166,50 @@ int main(int argc, const char * argv[]) {
                         
                     }
                     else if(option == 3){
-                        computerDificulty = medium;
+                        computerDificulty = hard;
                         
                     }else{
                         printf("your answer doesn't make sense...\n");
                         printf("I'll ask you again...\n");
                         break;
                     }
+                    higherThan = -1;
+                    lowerThan = 101;
                     printf("\n");
                     printf("ok, think of a number between 0 and 100\n");
                     printf("a whole number mind you, no decimals\n");
-                    printf("press any key when you are ready...\n");
+                    printf("press ENTER when you are ready...");
                     printf("\n");
                     gameState = computerGuessing;
-                    scanf("");
+                    
+                    
                     break;
                 case computerGuessing:
+                    
                     printf("I have %i guesses left...",guessesLeft);
-                    guess = getComputerGuess();
-                    printf("is your number 5?\n");
-                    printf("1. yes, my number was %i\n",guess);
-                    printf("2. too low %i\n",guess);
-                    printf("3. too high %i\n",guess);
+                    guess = getComputerGuess(computerDificulty,higherThan,lowerThan);
+                    printf("is your number %i?\n",guess);
                     printf("\n");
-                    scanf(" %c",&keepPlaying);
-                    if(keepPlaying == 'y'){
+                    printf("1. yes, my number was %i\n",guess);
+                    printf("2. %i is too low \n",guess);
+                    printf("3. %i is too high \n",guess);
+                    printf("\n");
+                    scanf(" %i",&option);
+                    
+                    if(option == 1){
                         printf("A HA!! I win again!\n");
                         printf("would you like to play again?\n");
+                        printf("(y/n)\n");
                         gameState = wantToPlay;
+                    }else if(option == 2){
+                        higherThan = guess;
+                        printf("hmmm, too hlow... \n");
+                    }
+                    else if(option == 3){
+                        lowerThan = guess;
+                        printf("hmmm, too high... \n");
+                    }else{
+                        
                     }
                     break;
                     
