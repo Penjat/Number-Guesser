@@ -31,7 +31,17 @@ int setUpPlayerGuess(){
     printf("I am thinking of a number between 0 and 100\n");
     return arc4random_uniform(101);
 }
-int getComputerGuess(enum state computerDificulty, int higherThan, int lowerThan){
+BOOL checkIfAlreadyGuessed(int guess,NSMutableArray * pastGuesses){
+    //returns YES if already guessed, NO if it is a new guess
+    for (NSNumber * num in pastGuesses) {
+        if([num intValue] == guess){
+            return YES;
+        }
+        
+    }
+    return NO;
+}
+int getComputerGuess(enum dificulty computerDificulty, int higherThan, int lowerThan){
     
     
     
@@ -59,7 +69,7 @@ int main(int argc, const char * argv[]) {
         int lowerThan = 101;
         char keepPlaying;
         
-        
+        NSMutableArray * pastGuesses = [[NSMutableArray alloc] init];
         
         while(isPlaying){
             switch(gameState){
@@ -74,7 +84,7 @@ int main(int argc, const char * argv[]) {
                     
                     
                 case gameType:
-                    
+                    [pastGuesses removeAllObjects];
                     printf("What type of game do you want to play?\n");
                     printf("\n");
                     printf("1) I'll guess\n" );
@@ -132,10 +142,21 @@ int main(int argc, const char * argv[]) {
                         gameState = playerLose;
                         break;
                     }
+                    
+                    
                     printf("you have %i guesses left.\n",guessesLeft);
                     printf("what do you guess?\n");
                     scanf(" %i",&guess);
                     
+                    //check if already guessed that number
+                    if(checkIfAlreadyGuessed(guess,pastGuesses)){
+                        printf("you already guessed %i\n",guess);
+                         printf("\n",guess);
+                        break;
+                    }
+                    
+                    //if not guessed add it to pastGuessed
+                    [pastGuesses addObject:[[NSNumber alloc]initWithInt:guess]];
                     
                     if(guess == answer){
                         printf("You guessed it!!!\n");
